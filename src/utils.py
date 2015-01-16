@@ -75,3 +75,13 @@ class MercuryBody:
         for key in self.bodyProperties.keys():
             if self.bodyProperties[key] == None:
                 del self.bodyProperties[key]
+
+    def InputFormattedString(self):
+        string = self.name
+        for key in self.bodyProperties.keys():
+            string += "  "+key+"="+str(self.bodyProperties[key])
+        string += "\n"
+        for element in self.orbitalElements:
+            string += "  "+str(element)
+        string += "  0  0  0\n"
+        return string

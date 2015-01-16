@@ -1,6 +1,8 @@
 import numpy as np
 from math import *
+from utils import *
 import matplotlib.pyplot as plt
+from mks import *
 
 PMIN = 1e0
 PMAX = 200e0
@@ -30,6 +32,19 @@ class PlanetarySystem(object):
         self.masses = np.random.rand(num_bodies)*(MAXMASS - MINMASS) + MINMASS
         self.inclinations = np.random.rayleigh(sigma_inc, num_bodies)
         self.sma = np.power(np.power(self.periods/DAYSPERYEAR, 2)*self.star_mass, 1./3.)
+        self.eccentricities = np.zeros(len(self.periods))
+
+    def write_mercury_input(self, dir="./"):
+        writer = MercuryInputWriter()
+        writer.directory = dir
+        for i in range(len(self.periods)):
+            planet = MercuryBody("P"+str(i), self.sma[i], self.eccentricities[i],
+                                 self.inclinations[i], np.random.rand()*360.,
+                                 np.random.rand()*360., np.random.rand()*360.,
+                                 mass=self.masses[i]*MEARTH/MSUN, density=3e0)
+            writer.AddBigBody(planet)
+        writer.WriteFiles()
+
 
     def plot(self):
         fig = plt.figure()
