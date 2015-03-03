@@ -3,89 +3,6 @@ from math import *
 from mks import *
 import numpy as np
 
-# def rotate_system(axis, theta, orbits):
-#     """ Transform the orbital elements to elements to a new coordinate system.
-
-#     Transform elements to cartesian coords. Rotate around axis counterclockwise
-#     by theta radians. transform back to orbital elements.
-
-#     Args:
-#         axis: Vector describing the rotation axis. x-direction is reference direction
-#             z-direction is normal to the reference plane.
-#         theta: degree of rotation [radians]
-#         orbits: (nx6) array where each row gives the orbial elements for an orbiting body.
-
-#     """
-
-#     coord_cart = elements_to_cartesian(orbits)
-#     pos = coord_cart[:,:3]
-#     vel = coord_cart[:,3:]
-#     rot = rotation_matrix(axis, theta)
-#     coord_cart[:,:3] = np.dot(rot, pos.transpose()).transpose()
-#     coord_cart[:,3:] = np.dot(rot, vel.transpose()).transpose()
-#     return(cartesian_to_elements(coord_cart))
-
-def rotate_system(phi, theta, orbits):
-    """ Rotate the orbits so that the reference direction is now pointing
-    toward the longitude phi and latitude theta.
-
-    """
-
-    coord_cart = elements_to_cartesian(orbits)
-    # print coord_cart
-    pos = coord_cart[:,:3]
-    vel = coord_cart[:,3:]
-    axis = np.array([cos(theta)*cos(phi), cos(theta)*sin(phi), sin(theta)])
-
-    #Must also randomly orient the reference plane
-    alpha = 2*pi*np.random.rand()
-    rot = rotation_matrix(axis, alpha)
-    # rot = np.array([[1, 0., 0], [0., 1., 0.], [0, 0., 1]])
-
-
-
-    Ry = np.array([[cos(-theta), 0., sin(-theta)], [0., 1., 0.], [-sin(-theta), 0., cos(-theta)]])
-    Rz = np.array([[cos(-phi), sin(-phi), 0.], [-sin(-phi), cos(-phi), 0.], [0., 0., 1.]])
-    # rot = np.dot(Rz, Ry)
-    coord_cart[:,:3] = np.dot(rot, np.dot(Rz, np.dot(Ry, pos.transpose()))).transpose()
-    coord_cart[:,3:] = np.dot(rot, np.dot(Rz, np.dot(Ry, vel.transpose()))).transpose()
-    # coord_cart[:,:3] = np.dot(rot, pos.transpose()).transpose()
-    # coord_cart[:,3:] = np.dot(rot, vel.transpose()).transpose()
-    # print coord_cart
-    return(cartesian_to_elements(coord_cart))
-
-
-def randomly_rotate_system(orbits):
-    coord_cart = elements_to_cartesian(orbits)
-    pos = coord_cart[:,:3]
-    vel = coord_cart[:,3:]
-
-    sign = np.random.rand()*2-1
-    sign = sign/abs(sign)
-    theta = acos(2*np.random.rand()-1)*sign
-    phi = 2*pi*np.random.rand()
-    x_axis = np.array([cos(theta)*cos(phi), cos(theta)*sin(phi), sin(theta)])
-
-
-    sign2 = np.random.rand()*2-1
-    sign2 = sign/abs(sign)
-    theta2 = acos(2*np.random.rand()-1)*sign2
-    phi2 = 2*pi*np.random.rand()
-    temp_axis = np.array([cos(theta2)*cos(phi), cos(theta2)*sin(phi2), sin(theta2)])
-    y_axis = np.cross(x_axis,temp_axis)
-    z_axis = np.cross(x_axis, y_axis)
-
-    x_axis = x_axis/np.linalg.norm(x_axis)
-    y_axis = y_axis/np.linalg.norm(y_axis)
-    z_axis = z_axis/np.linalg.norm(z_axis)
-    rot = np.array([x_axis, y_axis, z_axis])
-
-    coord_cart[:,:3] = np.dot(rot, pos.transpose()).transpose()
-    coord_cart[:,3:] = np.dot(rot, vel.transpose()).transpose()
-    return(cartesian_to_elements(coord_cart))
-
-
-
 def elements_radians2degrees(elements_in):
     elements = elements_in.copy()
     elements[:,2:] = elements[:,2:]*180/pi
@@ -182,23 +99,6 @@ def cartesian_to_elements(coords):
     elements.shape = (len(elements)/6, 6)
     return(elements)
 
-
-def rotation_matrix(axis, theta):
-    """
-    Return the rotation matrix associated with counterclockwise rotation about
-    the given axis by theta radians.
-    """
-    axis = np.asarray(axis)
-    theta = np.asarray(theta)
-
-    axis = axis/sqrt(np.dot(axis, axis))
-    a = cos(theta/2)
-    b, c, d = -axis*sin(theta/2)
-    aa, bb, cc, dd = a*a, b*b, c*c, d*d
-    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
-    return np.array([[aa+bb-cc-dd, 2*(bc+ad), 2*(bd-ac)],
-                     [2*(bc-ad), aa+cc-bb-dd, 2*(cd+ab)],
-                     [2*(bd+ac), 2*(cd-ab), aa+dd-bb-cc]])
 
 
 def transit_observable(orbits, reference, r_star=1):

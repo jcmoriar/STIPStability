@@ -22,7 +22,7 @@ def mutually_observable_planets(orbits, num_trials=10000):
         phi = 2*pi*np.random.rand()
         reference_diretion = np.array([sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)])
         # See how many transits are observable from that direction
-        transits = u.transit_observable(orbits)
+        transits = u.transit_observable(orbits, reference_diretion)
         num_observable.append(transits.count(True))
     print num_observable.count(1)/float((num_observable.count(0)+num_observable.count(1)))
     return(num_observable)
