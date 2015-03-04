@@ -24,30 +24,19 @@ def mutually_observable_planets(orbits, num_trials=10000):
         # See how many transits are observable from that direction
         transits = u.transit_observable(orbits, reference_diretion)
         num_observable.append(transits.count(True))
-    print num_observable.count(1)/float((num_observable.count(0)+num_observable.count(1)))
+    # print num_observable.count(1)/float((num_observable.count(0)+num_observable.count(1)))
     return(num_observable)
 
-def planets_observed_hist(num_observable):
+def planets_observed_hist(num_observable_in):
+    num_observable = []
+    for num in num_observable_in:
+        if num !=0:
+            num_observable.append(num)
     fig = plt.figure()
     axis = fig.add_subplot(111)
-    axis.hist(num_observable)
+    axis.hist(num_observable, bins=[1,2,3,4,5,6,7,8,9,10], align="left")
     axis.set_xlabel("Number of planets observed")
 
-def plot_angles(x, y, z):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(x,y,z)
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
 
-def test_rot(orbit, axis, theta):
-    orbit = np.array(orbit)
-    orbit[2:] = orbit[2:]*pi/180
-    orbit.shape=(1,6)
-    axis = np.array(axis)
-    theta = theta*pi/180
-    new_orbit = rotate_system(axis, theta, orbit)
-    new_orbit[0,2:] = new_orbit[0,2:]/pi*180
-    print new_orbit.tolist()
 
 

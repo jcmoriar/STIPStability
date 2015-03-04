@@ -28,7 +28,7 @@ def elements_to_cartesian(elements):
         M = elements[ii,5]
         #1. calculate the eccentric anomaly
         E = M
-        if e != 0:
+        if e != 0 and M != 0:
             Enext = e*sin(E) + M
             while (abs(Enext-E)/Enext > 1e-12):
                 print "            ", (abs(Enext-E)/Enext)
