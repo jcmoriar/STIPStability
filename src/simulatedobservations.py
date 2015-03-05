@@ -5,13 +5,13 @@ from mpl_toolkits.mplot3d import Axes3D
 from math import *
 
 
-def mutually_observable_planets(orbits, num_trials=10000):
+def mutually_observable_planets(orbits_in, num_trials=10000):
     """ Calculate the number of observable transits for a system
     from num_trials different viewing angles.
 
     Angles units should be in degrees.
     """
-
+    orbits = orbits_in.copy()
     orbits[:,2:] = orbits[:,2:]*pi/180
     num_observable=[]
     for i in range(num_trials):
